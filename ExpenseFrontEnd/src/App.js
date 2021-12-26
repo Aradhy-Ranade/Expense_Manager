@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Expense from "./components/Expenses/Expense";
 import NewExpense from "./components/NewExpense/NewExpense";
+import LoginPage from "./components/Home/LoginPage";
+import LogoutBar from "./components/Home/LogoutBar";
 
 function App() {
   // const initialExpense = [
@@ -24,7 +26,17 @@ function App() {
   //     date: new Date(2021, 5, 12),
   //   },
   // ];
+  const [valid, setValid] = useState(false);
   const [expense, setExpense] = useState([]);
+
+  const setvalidtrue = () => {
+    setValid(true);
+    console.log(valid);
+  };
+
+  const setvalidfalse = () => {
+    setValid(false);
+  };
 
   useEffect(() => {
     fetch("http://localhost:5000/Expense/")
@@ -92,8 +104,10 @@ function App() {
 
   return (
     <div>
-      <NewExpense onAddExpense={addExpenseHandler} />
-      <Expense expense={expense} />
+      {valid && <LogoutBar logoutit={setvalidfalse} />}
+      {valid && <NewExpense onAddExpense={addExpenseHandler} />}
+      {valid && <Expense expense={expense} />}
+      {!valid && <LoginPage validit={setvalidtrue} />}
     </div>
   );
 }
