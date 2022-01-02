@@ -1,0 +1,14 @@
+.profile {
+  /* display: flexbox; */
+  background-color: #40005d;
+  color: white;
+  width: 10%;
+  height: 50px;
+  text-align: center;
+}
+
+.profile label {
+  color: white;
+  font: inherit;
+  font-weight: bold;
+}

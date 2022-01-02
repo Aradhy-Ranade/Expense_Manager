@@ -32,6 +32,7 @@ function Expense(props) {
         />
         <ExpenseChat expenses={filteredExpenses} />
         <ExpensesList expenseItem={filteredExpenses} />
+        <h2 className="total">Total Balance : {props.totalbal} </h2>
       </Card>
     </div>
   );

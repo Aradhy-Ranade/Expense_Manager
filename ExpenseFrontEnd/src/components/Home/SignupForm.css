@@ -53,3 +53,11 @@
   margin-top: 1rem;
   width: 10%;
 }
+
+.logerr {
+  float: right;
+  color: red;
+  /* background-color: aliceblue; */
+  text-align: right;
+  font-size: small;
+}

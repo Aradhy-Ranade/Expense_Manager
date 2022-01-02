@@ -2,17 +2,28 @@ import React, { useState } from "react";
 import "./SignupForm.css";
 
 const SignupForm = (props) => {
+  const [errmsg, seterrmsg] = useState("");
+
   const [userinput, setuserinput] = useState({
-    username: "",
+    email: "",
+    firstName: "",
+    lastName: "",
     password: "",
-    name: "",
   });
 
-  const onusernamechangeHandler = (event) => {
+  const onemailchangeHandler = (event) => {
     setuserinput((pervalue) => {
       return {
         ...pervalue,
-        username: event.target.value,
+        email: event.target.value,
+      };
+    });
+  };
+  const onfirstnamechangeHandler = (event) => {
+    setuserinput((pervalue) => {
+      return {
+        ...pervalue,
+        firstName: event.target.value,
       };
     });
   };
@@ -24,52 +35,133 @@ const SignupForm = (props) => {
       };
     });
   };
-  const onnamechangeHandler = (event) => {
+  const onlastnamechangeHandler = (event) => {
     setuserinput((pervalue) => {
       return {
         ...pervalue,
-        name: event.target.value,
+        lastName: event.target.value,
       };
+    });
+  };
+
+  async function registerUser(userdata) {
+    try {
+      const response = await fetch("http://localhost:1000/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(userdata),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        const res = await response.json();
+        seterrmsg(res.message);
+      } else {
+        const res = await response.json();
+        const userforlogin = {
+          email: userdata.email,
+          password: userdata.password,
+        };
+        alert(res.message);
+        loginreq(userforlogin);
+        props.valid(localStorage.getItem("token"));
+        setInputnull();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function loginreq(userinput) {
+    try {
+      const response = await fetch("http://localhost:1000/api/auth/signin", {
+        method: "POST",
+        body: JSON.stringify(userinput),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        // throw Error(response.statusText);
+        seterrmsg(
+          await response.json().then((res) => console.log(res.message))
+        );
+      } else {
+        const res = await response.json();
+        localStorage.setItem("token", res.token);
+        props.valid(localStorage.getItem("token"));
+        seterrmsg("");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const setInputnull = () => {
+    setuserinput({
+      email: "",
+      firstName: "",
+      lastName: "",
+      password: "",
     });
   };
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.valid();
+    setuserinput({
+      email: event.target.email.value,
+      firstName: event.target.firstname.value,
+      lastName: event.target.lastname.value,
+      password: event.target.password.value,
+    });
+    registerUser(userinput);
   };
 
   return (
     <form onSubmit={submitHandler} className="signupform">
       <div className="signup_control">
         <div className="holderl">
-          <label for="name">Name</label>
+          <label>Email</label>
         </div>
         <div className="holderin">
           <input
             type="text"
-            id="name"
-            value={userinput.name}
-            onChange={onnamechangeHandler}
+            id="email"
+            value={userinput.email}
+            onChange={onemailchangeHandler}
           />
         </div>
       </div>
       <div className="signup_control">
         <div className="holderl">
-          <label for="username">Username</label>
+          <label>Firstname</label>
+        </div>
+        <div className="holderin">
+          <input
+            type="text"
+            id="firstname"
+            value={userinput.firstName}
+            onChange={onfirstnamechangeHandler}
+          />
+        </div>
+      </div>
+      <div className="signup_control">
+        <div className="holderl">
+          <label>Lastname</label>
         </div>
         <div className="holderin">
           <input
             type="text"
             min="1"
-            id="username"
-            value={userinput.password}
-            onChange={onusernamechangeHandler}
+            id="lastname"
+            value={userinput.lastName}
+            onChange={onlastnamechangeHandler}
           />
         </div>
       </div>
       <div className="signup_control">
         <div className="holderl">
-          <label for="password">Password</label>
+          <label>Password</label>
         </div>
         <div className="holderin">
           <input
@@ -79,10 +171,13 @@ const SignupForm = (props) => {
             value={userinput.password}
             onChange={onpasswordchangeHandler}
           />
+          <div className="logerr">
+            <label>{errmsg}</label>
+          </div>
         </div>
       </div>
       <div className="signup__actions">
-        <button type="button" onClick={props.onCancel}>
+        <button type="button" onClick={setInputnull}>
           Cancel
         </button>
         <button type="submit">SignUp</button>

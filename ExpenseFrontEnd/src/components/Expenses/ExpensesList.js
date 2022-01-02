@@ -7,13 +7,13 @@ function ExpensesList(props) {
       <ul className="expenses-list">
         {props.expenseItem.map((filteredExpenses) => (
           <ExpenseItem
-            key={filteredExpenses.id}
-            title={filteredExpenses.title}
+            key={Math.random()}
+            summary={filteredExpenses.summary}
             amount={filteredExpenses.amount}
+            type={filteredExpenses.expensetype}
             date={filteredExpenses.date}
           />
         ))}
-        ;
       </ul>
     );
   } else return <p className="expenses-list__fallback">No Macth Found!</p>;
